@@ -1,7 +1,6 @@
 package subpptx
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -22,8 +21,6 @@ func injectSubtitle(slidePath string, done chan bool) {
 	defer func() {
 		done <- true
 	}()
-
-	fmt.Println(slidePath)
 
 	relsPath := filepath.Join(filepath.Dir(slidePath), "_rels", filepath.Base(slidePath)+".rels")
 
@@ -75,7 +72,7 @@ func injectSubtitle(slidePath string, done chan bool) {
 	slide.WriteToFile(slidePath)
 }
 
-func InjectSubtitles(pptxPath string, outputPath string) {
+func InjectSubtitles(pptxPath string, outputPath string, monitor chan int) {
 	// Create temp dir
 	pptxBase := filepath.Base(pptxPath)
 	tempDir, err := ioutil.TempDir("", pptxBase)
@@ -105,9 +102,13 @@ func InjectSubtitles(pptxPath string, outputPath string) {
 		}
 	}
 
+	// Let the caller know the number of slides
+	monitor <- count
+
 	// Join the goroutines
 	for i := 0; i < count; i++ {
 		<-done
+		monitor <- i
 	}
 
 	// Save as a new PPTX
@@ -121,4 +122,7 @@ func InjectSubtitles(pptxPath string, outputPath string) {
 	}
 
 	archiver.Zip.Make(outputPath, filenames)
+
+	// Let the caller know all works done
+	monitor <- 0
 }
