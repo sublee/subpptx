@@ -31,8 +31,10 @@ func runCommand(path string, outputPath string) {
 	}
 
 	<-monitor
+	l.Printf(`saved at "%s" (%s elapsed)`, outputPath, time.Since(t))
+
+	<-monitor
 	l.Printf("done (%s elapsed)", time.Since(t))
-	l.Printf("saved at %s", outputPath)
 }
 
 var cmd = &cobra.Command{

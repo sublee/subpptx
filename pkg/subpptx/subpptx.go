@@ -2,6 +2,7 @@ package subpptx
 
 import (
 	"io/ioutil"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -72,7 +73,7 @@ func injectSubtitle(slidePath string, done chan bool) {
 	slide.WriteToFile(slidePath)
 }
 
-func InjectSubtitles(pptxPath string, outputPath string, monitor chan int) {
+func InjectSubtitles(pptxPath string, outputPath string, monitor chan<- int) {
 	// Create temp dir
 	pptxBase := filepath.Base(pptxPath)
 	tempDir, err := ioutil.TempDir("", pptxBase)
@@ -111,7 +112,7 @@ func InjectSubtitles(pptxPath string, outputPath string, monitor chan int) {
 		monitor <- i
 	}
 
-	// Save as a new PPTX
+	// Collect filenames to be archived
 	rootFiles, err := ioutil.ReadDir(tempDir)
 	if err != nil {
 		panic("failed to read temp dir")
@@ -121,8 +122,11 @@ func InjectSubtitles(pptxPath string, outputPath string, monitor chan int) {
 		filenames[i] = filepath.Join(tempDir, file.Name())
 	}
 
+	// Save as a new PPTX
 	archiver.Zip.Make(outputPath, filenames)
+	monitor <- 0
 
-	// Let the caller know all works done
+	// Remove the temp dir
+	os.RemoveAll(tempDir)
 	monitor <- 0
 }
