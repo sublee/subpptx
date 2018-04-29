@@ -17,16 +17,18 @@ func runCommand(path string, outputPath string) {
 
 	go subpptx.InjectSubtitles(path, outputPath, monitor)
 
-	l.Printf("processing %s...", path)
+	l.Printf(`processing "%s"...`, path)
 
 	numSlides := <-monitor
+	step := numSlides / 10
 
 	l.Printf("%d slides found (%s elapsed)", numSlides, time.Since(t))
 
 	for i := 0; i < numSlides; i++ {
 		<-monitor
-		if (i+1)%10 == 0 {
-			l.Printf("%d slides modified (%s elapsed)", i+1, time.Since(t))
+		if (i+1)%step == 0 {
+			percent := (float64(i+1) / float64(numSlides)) * 100
+			l.Printf("%3.0f%% of slides modified (%s elapsed)", percent, time.Since(t))
 		}
 	}
 
