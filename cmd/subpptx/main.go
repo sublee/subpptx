@@ -26,6 +26,11 @@ func runCommand(path string, outputPath string) {
 
 	for i := 0; i < numSlides; i++ {
 		<-monitor
+
+		if step == 0 {
+			// Avoid zero division error
+			continue
+		}
 		if (i+1)%step == 0 {
 			percent := (float64(i+1) / float64(numSlides)) * 100
 			l.Printf("%3.0f%% of slides modified (%s elapsed)", percent, time.Since(t))
