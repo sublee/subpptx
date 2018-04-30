@@ -12,6 +12,22 @@ There are two prerequisites:
 
 If you have a ready `.pptx` file, do:
 
-```
+```console
 subpptx <pptx> <output>
 ```
+
+## Example
+
+Here's subtitle-ready PPTX:
+
+![Screenshot of subtitle-ready PPTX](docs/input.png)
+
+Now inject subtitles via `subpptx`:
+
+```console
+subpptx subpptx.pptx output.pptx
+```
+
+You can get a new PPTX file with subtitles:
+
+![Output slide which has subtitle as footer](docs/output.png)
