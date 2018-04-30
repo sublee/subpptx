@@ -18,7 +18,7 @@ subpptx <pptx> <output>
 
 ## Example
 
-Here's subtitle-ready PPTX:
+Here's a subtitle-ready PPTX:
 
 ![Screenshot of subtitle-ready PPTX](docs/input.png)
 
